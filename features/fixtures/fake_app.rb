@@ -29,5 +29,9 @@ module CucumberApiSteps
       input_data = JSON.parse request.env["rack.input"].read, symbolize_names: true
       status 201 if input_data == {publisher: 'Pragprog'}
     end
+
+    get '/env' do
+      JSON.generate Hash[(request.env.to_hash.map{|k,v|[k.to_s, v.to_s]} )]
+    end
   end
 end

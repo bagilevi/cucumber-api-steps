@@ -11,6 +11,16 @@ def app
   Rack::Lint.new(CucumberApiSteps::FakeApp.new)
 end
 
+Thread.new {
+  Rack::Server.start(app: app, Port: 3921)
+}
+sleep 1
+puts "Continuing"
+
+Before do
+  url "http://localhost:3921"
+end
+
 Before("@digest-auth") do
   def app
     app = Rack::Auth::Digest::MD5.new(CucumberApiSteps::FakeApp.new) do |username|

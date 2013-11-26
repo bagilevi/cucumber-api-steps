@@ -44,17 +44,21 @@ module Cucumber::ApiSteps::Methods
       @headers[k.to_s] = v.to_s
     end
 
-    def request(path, request_opts)
+    def request(path, request_opts = {})
+      @last_response = nil
       puts "= request(#{path.inspect}, #{request_opts.inspect}"
-      @last_response = conn.run_request(request_opts[:method], path, nil, @headers) { |req|
+      @last_response = conn.run_request(request_opts[:method] || :get, path, nil, @headers) { |req|
         req.body = request_opts[:input] if request_opts.has_key?(:input)
+        req.params = request_opts[:params] if request_opts.has_key?(:params)
+        @headers.each do |k, v|
+          req.headers[k] = v
+        end
       }
     end
 
     def last_response
       @last_response
     end
-
 
     def conn
       @conn ||=

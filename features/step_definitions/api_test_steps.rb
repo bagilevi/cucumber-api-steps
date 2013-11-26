@@ -31,8 +31,8 @@ end
 
 Then /^the request headers should be:$/ do |headers|
   headers_hash = headers.rows_hash
-  request '/'
-  last_request.env.slice(*headers_hash.keys).values.should eq(headers_hash.values)
+  request '/env'
+  JSON.parse(last_response.body).slice(*headers_hash.keys).values.should eq(headers_hash.values)
 end
 
 Then /^I should be authenticated$/ do
