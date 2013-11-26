@@ -1,18 +1,8 @@
 require 'jsonpath'
 require 'nokogiri'
 
-if defined?(Rack)
-
-  # Monkey patch Rack::MockResponse to work properly with response debugging
-  class Rack::MockResponse
-    def to_str
-      body
-    end
-  end
-
-  World(Rack::Test::Methods)
-
-end
+require 'cucumber/api_steps/methods'
+World(Cucumber::ApiSteps::Methods)
 
 Given /^I set headers:$/ do |headers|
   headers.rows_hash.each {|k,v| header k, v }
@@ -80,13 +70,13 @@ Then /^the JSON response should (not)?\s?have "([^"]*)"$/ do |negative, json_pat
   json    = JSON.parse(last_response.body)
   results = JsonPath.new(json_path).on(json).to_a.map(&:to_s)
   if self.respond_to?(:should)
-    if negative.present?
+    if negative && negative.present?
       results.should be_empty
     else
       results.should_not be_empty
     end
   else
-    if negative.present?
+    if negative && negative.present?
       assert results.empty?
     else
       assert !results.empty?
@@ -99,13 +89,13 @@ Then /^the JSON response should (not)?\s?have "([^"]*)" with the text "([^"]*)"$
   json    = JSON.parse(last_response.body)
   results = JsonPath.new(json_path).on(json).to_a.map(&:to_s)
   if self.respond_to?(:should)
-    if negative.present?
+    if negative && negative.present?
       results.should_not include(text)
     else
       results.should include(text)
     end
   else
-    if negative.present?
+    if negative && negative.present?
       assert !results.include?(text)
     else
       assert results.include?(text)
@@ -117,13 +107,13 @@ Then /^the XML response should (not)?\s?have "([^"]*)"$/ do |negative, xpath|
   parsed_response = Nokogiri::XML(last_response.body)
   elements = parsed_response.xpath(xpath)
   if self.respond_to?(:should)
-    if negative.present?
+    if negative && negative.present?
       elements.should be_empty
     else
       elements.should_not be_empty
     end
   else
-    if negative.present?
+    if negative && negative.present?
       assert elements.empty?
     else
       assert !elements.empty?
