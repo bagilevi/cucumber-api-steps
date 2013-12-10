@@ -40,13 +40,13 @@ module Cucumber::ApiSteps::Methods
     end
 
     def header(k,v)
-      puts "= header(#{k.inspect}, #{v.inspect})"
+      #puts "= header(#{k.inspect}, #{v.inspect})"
       @headers[k.to_s] = v.to_s
     end
 
     def request(path, request_opts = {})
       @last_response = nil
-      puts "= request(#{path.inspect}, #{request_opts.inspect}"
+      #puts "= request(#{path.inspect}, #{request_opts.inspect}"
       @last_response = conn.run_request(request_opts[:method] || :get, path, nil, @headers) { |req|
         req.body = request_opts[:input] if request_opts.has_key?(:input)
         req.params = request_opts[:params] if request_opts.has_key?(:params)
